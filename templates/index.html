@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>slides</title>
+
+    <style>
+      body {
+        font: 16px system-ui;
+        margin: 40px;
+        max-width: 900px;
+      }
+      h1 {
+        margin-bottom: 16px;
+      }
+      input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+      a.card {
+        display: block;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 14px;
+        text-decoration: none;
+        color: inherit;
+      }
+      a.card:hover {
+        border-color: #aaa;
+      }
+      .name {
+        font-weight: 600;
+      }
+      .path {
+        opacity: 0.6;
+        font-size: 12px;
+        margin-top: 6px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>slides</h1>
+    <input id="q" placeholder="filter decks…" autofocus />
+
+    <div class="grid" id="grid">
+      <!--DECKS-->
+    </div>
+
+    <script>
+      const q = document.getElementById("q");
+      const cards = [...document.querySelectorAll(".card")];
+      q.addEventListener("input", () => {
+        const s = q.value.toLowerCase();
+        cards.forEach(c => {
+          c.style.display = c.textContent.toLowerCase().includes(s)
+            ? "block"
+            : "none";
+        });
+      });
+    </script>
+  </body>
+</html>

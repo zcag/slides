@@ -10,7 +10,9 @@ build:
 	find decks -mindepth 2 -maxdepth 2 -name slides.md | while read -r f; do \
 	  deck=$$(basename $$(dirname "$$f")); \
 	  echo "▶ building $$deck"; \
-	  npx slidev build "$$f" --base "$(BASE)" --out "$(OUT)/$$deck"; \
+	  npx slidev build "$$f" \
+	    --base "$(BASE)$$deck/" \
+	    --out "$(OUT)/$$deck"; \
 	done
 
 	# generate index.html from template
@@ -19,4 +21,3 @@ build:
 	  deck=$$(basename $$(dirname "$$f")); \
 	  sed -i "s|<!--DECKS-->|<a class=\"card\" href=\"./$$deck/\"><div class=\"name\">$$deck</div><div class=\"path\">/$$deck/</div></a>\n<!--DECKS-->|" "$(OUT)/index.html"; \
 	done
-

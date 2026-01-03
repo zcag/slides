@@ -1,5 +1,6 @@
 BASE := /slides/
 OUT  := $(CURDIR)/dist
+PORT ?= 3030
 
 # Also used by github workflow
 build:
@@ -21,3 +22,12 @@ build:
 	  deck=$$(basename $$(dirname "$$f")); \
 	  sed -i "s|<!--DECKS-->|<a class=\"card\" href=\"./$$deck/\"><div class=\"name\">$$deck</div><div class=\"path\">/$$deck/</div></a>\n<!--DECKS-->|" "$(OUT)/index.html"; \
 	done
+
+dev:
+	@deck=$(filter-out $@,$(MAKECMDGOALS)); \
+	( sleep 2 && xdg-open http://localhost:$(PORT) ) & \
+	exec npx slidev decks/$$deck/slides.md --host 0.0.0.0 --port $(PORT)
+
+# swallow positional arg
+%:
+	@:

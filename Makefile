@@ -1,4 +1,4 @@
-BASE := /slides/
+BASE := /
 OUT  := $(CURDIR)/dist
 PORT ?= 3030
 
@@ -7,9 +7,9 @@ build:
 	rm -rf "$(OUT)"
 	mkdir -p "$(OUT)"
 
-	# build decks
-	find decks -mindepth 2 -maxdepth 2 -name slides.md | while read -r f; do \
-	  deck=$$(basename $$(dirname "$$f")); \
+	# build decks (supports decks/name/ and decks/group/name/)
+	find decks -mindepth 2 -maxdepth 3 -name slides.md | while read -r f; do \
+	  deck=$${f#decks/}; deck=$${deck%/slides.md}; \
 	  echo "▶ building $$deck"; \
 	  npx slidev build "$$f" \
 	    --base "$(BASE)$$deck/" \
@@ -18,8 +18,8 @@ build:
 
 	# generate index.html from template
 	cp templates/index.html "$(OUT)/index.html"
-	find decks -mindepth 2 -maxdepth 2 -name slides.md | while read -r f; do \
-	  deck=$$(basename $$(dirname "$$f")); \
+	find decks -mindepth 2 -maxdepth 3 -name slides.md | while read -r f; do \
+	  deck=$${f#decks/}; deck=$${deck%/slides.md}; \
 	  sed -i "s|<!--DECKS-->|<a class=\"card\" href=\"./$$deck/\"><div class=\"name\">$$deck</div><div class=\"path\">/$$deck/</div></a>\n<!--DECKS-->|" "$(OUT)/index.html"; \
 	done
 

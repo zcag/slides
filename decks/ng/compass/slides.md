@@ -608,34 +608,120 @@ layout: default
 
 # Template Generation
 
-<div class="mt-4 text-sm text-slate-400 mb-6">Templates are generated from standard source specs. The generator produces both files. Generated files are the starting point — hand-tuning is expected and the generator is non-destructive.</div>
+<div class="grid grid-cols-2 gap-8 mt-4">
+<div>
 
-<div class="grid grid-cols-2 gap-6 text-sm">
+<div class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">Source → output</div>
 
-<div v-click class="border-l-2 border-blue-500 pl-4">
-  <div class="text-blue-400 font-mono text-xs mb-2">WSDL → SOAP templates</div>
-  <div class="text-slate-400 text-xs">Parse operations + XSD input/output types → SOAP envelope Jinja2 + GraphQL types with XPath directives auto-derived from XSD paths</div>
+<div class="space-y-3 text-xs">
+<div v-click class="border-l-2 border-blue-500 pl-3">
+  <div class="text-blue-400 font-mono mb-1">WSDL → SOAP</div>
+  <div class="text-slate-400">Operations + XSD types → SOAP envelope <code>.j2</code> + GraphQL types with <code>@xpath</code> directives derived from XSD element paths</div>
+</div>
+<div v-click class="border-l-2 border-green-500 pl-3">
+  <div class="text-green-400 font-mono mb-1">OpenAPI → REST</div>
+  <div class="text-slate-400">Paths + JSON Schema → request body <code>.j2</code> + GraphQL types with <code>@jsonpath</code> derived from schema field names</div>
+</div>
+<div v-click class="border-l-2 border-purple-500 pl-3">
+  <div class="text-purple-400 font-mono mb-1">YANG → NETCONF</div>
+  <div class="text-slate-400">RPC input/output nodes → <code>&lt;rpc&gt;</code> XML <code>.j2</code> + GraphQL types with <code>@xpath</code> (NETCONF responses are XML)</div>
+</div>
+<div v-click class="border-l-2 border-yellow-500 pl-3">
+  <div class="text-yellow-400 font-mono mb-1">Manual → SSH</div>
+  <div class="text-slate-400">CLI command string <code>.j2</code> + GraphQL types by hand. Output via NTC TextFSM templates or custom <code>.textfsm</code> file</div>
+</div>
 </div>
 
-<div v-click class="border-l-2 border-green-500 pl-4">
-  <div class="text-green-400 font-mono text-xs mb-2">OpenAPI → REST templates</div>
-  <div class="text-slate-400 text-xs">Parse paths + request/response schemas → JSON body Jinja2 + GraphQL types with JSONPath directives derived from schema field names</div>
+</div>
+<div v-click>
+
+<div class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-3">Type mapping rules</div>
+
+<div class="grid grid-cols-2 gap-x-4 text-xs text-slate-400 font-mono">
+  <div class="text-slate-500 mb-1">XSD / JSON Schema</div>
+  <div class="text-slate-500 mb-1">GraphQL</div>
+
+  <div>xs:string / string</div><div>String</div>
+  <div>xs:int / integer</div><div>Int</div>
+  <div>xs:dateTime / date-time</div><div>DateTime</div>
+  <div>xs:enumeration / enum</div><div>enum { }</div>
+  <div>xs:complexType / object</div><div>type { }</div>
+  <div class="mt-1">maxOccurs=unbounded</div><div class="mt-1 text-indigo-400">[Type]  ← list</div>
+  <div>nillable / not required</div><div class="text-slate-500">nullable (no !)</div>
+  <div>minOccurs=1 / required</div><div class="text-white">required (!)</div>
 </div>
 
-<div v-click class="border-l-2 border-purple-500 pl-4">
-  <div class="text-purple-400 font-mono text-xs mb-2">YANG → NETCONF templates</div>
-  <div class="text-slate-400 text-xs">Parse RPC definitions → NETCONF <code>&lt;rpc&gt;</code> XML Jinja2 + GraphQL types from YANG input/output nodes with XPath</div>
-</div>
-
-<div v-click class="border-l-2 border-yellow-500 pl-4">
-  <div class="text-yellow-400 font-mono text-xs mb-2">NTC / manual → SSH templates</div>
-  <div class="text-slate-400 text-xs">CLI command string Jinja2 + GraphQL types defined manually, TextFSM template from NTC library or written by hand</div>
+<div class="mt-4 text-xs text-slate-600 border border-slate-800 rounded px-3 py-2">
+  Always hand-tune: XPath root context, nullability mismatches, field name casing, namespace-aware paths
 </div>
 
 </div>
+</div>
 
-<div v-click class="mt-8 text-xs text-slate-500 border border-slate-800 rounded px-4 py-3">
-  <span class="text-indigo-400 font-mono">nce_ip example:</span> WSDL with ~80 operations → 80 template pairs generated in one pass. Hand-tune the 10 you actually use.
+---
+layout: default
+---
+
+# Per-NMS Generation Guide
+
+<div class="grid grid-cols-2 gap-x-8 gap-y-4 mt-4 text-xs">
+
+<div v-click class="border border-slate-700 rounded p-3">
+  <div class="flex gap-2 mb-2">
+    <span class="text-blue-400 font-mono">SOAP</span>
+    <span class="text-slate-600">·</span>
+    <span class="text-slate-400">nce_ip · nce_t</span>
+  </div>
+  <div class="text-slate-400 space-y-1">
+    <div>1. Obtain WSDL from vendor or NMS endpoint (<code>?wsdl</code>)</div>
+    <div>2. <code>compass scaffold soap --wsdl nce.wsdl --operation getAlarms</code></div>
+    <div>3. Review XPath root — SOAP responses often wrap in <code>&lt;return&gt;</code> or <code>&lt;result&gt;</code></div>
+    <div>4. Check namespace prefix — may need <code>//nce:alarm</code> not <code>//alarm</code></div>
+  </div>
+</div>
+
+<div v-click class="border border-slate-700 rounded p-3">
+  <div class="flex gap-2 mb-2">
+    <span class="text-green-400 font-mono">REST</span>
+    <span class="text-slate-600">·</span>
+    <span class="text-slate-400">nfm_t · nokia_tx · cloud</span>
+  </div>
+  <div class="text-slate-400 space-y-1">
+    <div>1. Get OpenAPI spec — usually at <code>/api-docs</code> or <code>/swagger.json</code></div>
+    <div>2. <code>compass scaffold rest --spec openapi.yaml --operation getAlarms</code></div>
+    <div>3. Check if response wraps in <code>{ "data": [...] }</code> — adjust JSONPath root</div>
+    <div>4. Path params (<code>/ne/{id}</code>) become required input fields</div>
+  </div>
+</div>
+
+<div v-click class="border border-slate-700 rounded p-3">
+  <div class="flex gap-2 mb-2">
+    <span class="text-purple-400 font-mono">NETCONF</span>
+    <span class="text-slate-600">·</span>
+    <span class="text-slate-400">mae</span>
+  </div>
+  <div class="text-slate-400 space-y-1">
+    <div>1. Get YANG models from vendor SDK or <code>get-schema</code> RPC on device</div>
+    <div>2. <code>compass scaffold netconf --yang model.yang --rpc get-alarms</code></div>
+    <div>3. Distinguish config vs state paths — use <code>/state/</code> nodes for reads</div>
+    <div>4. Responses are XML — same XPath rules as SOAP</div>
+  </div>
+</div>
+
+<div v-click class="border border-slate-700 rounded p-3">
+  <div class="flex gap-2 mb-2">
+    <span class="text-yellow-400 font-mono">SSH</span>
+    <span class="text-slate-600">·</span>
+    <span class="text-slate-400">datacore · cisco</span>
+  </div>
+  <div class="text-slate-400 space-y-1">
+    <div>1. Write CLI command template manually: <code>show interfaces {{ interface }}</code></div>
+    <div>2. Check NTC Templates for existing TextFSM: <code>ntc-templates/templates/</code></div>
+    <div>3. If no NTC template exists, write <code>.textfsm</code> against real device output</div>
+    <div>4. GraphQL input/output types written by hand</div>
+  </div>
+</div>
+
 </div>
 
 ---

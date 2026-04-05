@@ -1,5 +1,6 @@
 ---
 title: Linux 101
+description: SSH, core commands, pipes, text processing, CLI tools
 theme: default
 colorSchema: dark
 highlighter: shiki

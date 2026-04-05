@@ -1,5 +1,6 @@
 ---
 title: Sentinel — Alarm Routing Service
+description: Alarm routing, 4 NBI interfaces, RBAC, E2E test coverage
 theme: default
 colorSchema: dark
 highlighter: shiki

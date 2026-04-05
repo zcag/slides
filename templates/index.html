@@ -3,69 +3,160 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>slides</title>
+    <title>Slides</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 
     <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        font: 16px system-ui;
-        margin: 40px;
-        max-width: 900px;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        min-height: 100vh;
+        padding: 60px 40px;
+        max-width: 960px;
+        margin: 0 auto;
       }
+
+      header {
+        margin-bottom: 36px;
+      }
+
       h1 {
-        margin-bottom: 16px;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        color: #fff;
       }
+
+      h1 span {
+        color: #4ade80;
+      }
+
+      .search {
+        margin-top: 20px;
+        position: relative;
+      }
+
+      .search svg {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #555;
+        pointer-events: none;
+      }
+
       input {
         width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
+        padding: 12px 14px 12px 42px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        color: #e0e0e0;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s;
       }
+
+      input::placeholder { color: #555; }
+      input:focus { border-color: #4ade80; }
+
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 12px;
-        margin-top: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+        margin-top: 28px;
       }
+
       a.card {
-        display: block;
-        padding: 14px;
-        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 20px;
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
         border-radius: 14px;
         text-decoration: none;
         color: inherit;
+        transition: border-color 0.15s, background 0.15s;
       }
+
       a.card:hover {
-        border-color: #aaa;
+        border-color: #4ade80;
+        background: #1e1e1e;
       }
-      .name {
+
+      .title {
+        font-size: 15px;
         font-weight: 600;
+        color: #fff;
       }
+
+      .desc {
+        font-size: 13px;
+        color: #888;
+        line-height: 1.4;
+      }
+
       .path {
-        opacity: 0.6;
+        font-family: 'JetBrains Mono', monospace;
         font-size: 12px;
-        margin-top: 6px;
+        color: #555;
+      }
+
+      .group {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 500;
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+        padding: 2px 8px;
+        border-radius: 6px;
+        width: fit-content;
+      }
+
+      .empty {
+        text-align: center;
+        color: #555;
+        padding: 40px 0;
+        display: none;
       }
     </style>
   </head>
 
   <body>
-    <h1>slides</h1>
-    <input id="q" placeholder="filter decks…" autofocus />
+    <header>
+      <h1><span>/</span> Slides</h1>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="q" placeholder="Filter decks…" autofocus />
+      </div>
+    </header>
 
     <div class="grid" id="grid">
       <!--DECKS-->
     </div>
+    <div class="empty" id="empty">No matching decks</div>
 
     <script>
       const q = document.getElementById("q");
+      const grid = document.getElementById("grid");
+      const empty = document.getElementById("empty");
       const cards = [...document.querySelectorAll(".card")];
       q.addEventListener("input", () => {
         const s = q.value.toLowerCase();
+        let visible = 0;
         cards.forEach(c => {
-          c.style.display = c.textContent.toLowerCase().includes(s)
-            ? "block"
-            : "none";
+          const show = c.textContent.toLowerCase().includes(s);
+          c.style.display = show ? "" : "none";
+          if (show) visible++;
         });
+        empty.style.display = visible === 0 ? "block" : "none";
       });
     </script>
   </body>

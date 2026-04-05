@@ -1,0 +1,28 @@
+/*
+ * Shared slide styles — symlinked into each deck by the Makefile.
+ * Prevents content from overflowing the slide viewport (980×552).
+ */
+
+/* Safety net: scroll instead of invisible overflow */
+.slidev-layout {
+  overflow-y: auto;
+}
+
+/* Tighter defaults to fit more content */
+.slidev-layout h1 { font-size: 1.75em; margin-bottom: 0.3em; }
+.slidev-layout h2 { font-size: 1.35em; margin-bottom: 0.25em; }
+.slidev-layout h3 { font-size: 1.1em;  margin-bottom: 0.2em; }
+
+.slidev-layout p  { margin: 0.3em 0; }
+.slidev-layout ul,
+.slidev-layout ol { margin: 0.2em 0; padding-left: 1.2em; }
+.slidev-layout li { margin: 0.1em 0; }
+
+/* Compact tables */
+.slidev-layout table    { font-size: 0.85em; }
+.slidev-layout th,
+.slidev-layout td       { padding: 0.2em 0.6em; }
+
+/* Compact code blocks */
+.slidev-layout pre      { margin: 0.3em 0; padding: 0.5em 0.8em; font-size: 0.85em; }
+.slidev-layout code     { font-size: 0.9em; }

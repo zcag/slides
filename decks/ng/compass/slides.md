@@ -1,5 +1,6 @@
 ---
 title: Compass — Southbound Adapter Layer
+description: Unified southbound adapters — 8 NMS systems, 5 protocols, GraphQL northbound
 theme: default
 colorSchema: dark
 highlighter: shiki

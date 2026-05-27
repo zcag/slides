@@ -1,6 +1,8 @@
 BASE := /
 OUT  := $(CURDIR)/dist
 PORT ?= 3030
+REMOTE     ?= archer
+REMOTE_DIR ?= web/slides
 
 # Also used by github workflow
 build:
@@ -37,6 +39,12 @@ build:
 	  [ -n "$$group" ] && grouptag="<div class=\"group\">$$group</div>"; \
 	  sed -i "s|<!--DECKS-->|<a class=\"card\" href=\"./$$deck/\">$$grouptag<div class=\"title\">$$title</div>$$desctag<div class=\"path\">/$$deck/</div></a>\n<!--DECKS-->|" "$(OUT)/index.html"; \
 	done
+
+# build + push the static dist to archer; served by the Caddy edge at slides.cagdas.io
+deploy: build
+	ssh $(REMOTE) "mkdir -p $(REMOTE_DIR)"
+	rsync -az --delete "$(OUT)/" $(REMOTE):$(REMOTE_DIR)/
+	@echo "✓ deployed → $(REMOTE):$(REMOTE_DIR)  (https://slides.cagdas.io)"
 
 dev:
 	@deck=$(filter-out $@,$(MAKECMDGOALS)); \

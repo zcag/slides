@@ -28,9 +28,9 @@ build:
 	cp templates/index.html "$(OUT)/index.html"
 	find decks -mindepth 1 -maxdepth 3 -name slides.md | sort | while read -r f; do \
 	  deck=$${f#decks/}; deck=$${deck%/slides.md}; \
-	  title=$$(awk '/^---$$/{n++} n==1 && /^title:/{sub(/^title:[[:space:]]*/,"");print;exit}' "$$f"); \
+	  title=$$(awk '/^---$$/{n++} n==1 && /^title:/{sub(/^title:[[:space:]]*/,"");print;exit}' "$$f" | sed 's/&/\\&/g'); \
 	  [ -z "$$title" ] && title="$$deck"; \
-	  desc=$$(awk '/^---$$/{n++} n==1 && /^description:/{sub(/^description:[[:space:]]*/,"");print;exit}' "$$f"); \
+	  desc=$$(awk '/^---$$/{n++} n==1 && /^description:/{sub(/^description:[[:space:]]*/,"");print;exit}' "$$f" | sed 's/&/\\&/g'); \
 	  desctag=""; \
 	  [ -n "$$desc" ] && desctag="<div class=\"desc\">$$desc</div>"; \
 	  group=$$(dirname "$$deck"); \
